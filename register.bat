@@ -1,0 +1,1 @@
+sc create PdfServer binPath= "python C:\cygwin64\home\AdminInt\pdfserver\manage.py runserver --insecure 192.168.165.31:1234" start= auto displayname= "AutoPdfServer"

@@ -1,0 +1,1 @@
+python .\manage.py runserver --insecure 192.168.165.31:1234
