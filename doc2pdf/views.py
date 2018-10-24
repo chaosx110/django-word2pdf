@@ -11,5 +11,9 @@ from utils import doc2pdf
 def index(request):
     if 'doc_name' in request.GET:
         doc_name = request.GET['doc_name']
-        doc2pdf.main(doc_name)
+        try:
+            doc2pdf.main(doc_name)
+        except Exception as err:
+            print(err)
+			return HttpResponse('N')
         return HttpResponse('Y')

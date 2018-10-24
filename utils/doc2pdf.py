@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 import os
 import sys
+from time import sleep
 from pythoncom import CoInitialize, CoUninitialize
 from win32com.client import Dispatch, constants, gencache
 
@@ -43,21 +44,42 @@ def convert_word_to_pdf(docx_path, pdf_path):
     finally:
         word.Quit(constants.wdDoNotSaveChanges)
         CoUninitialize()
+
 def ensure_module():
     gencache.EnsureModule('{00020905-0000-0000-C000-0000000000046}', 0, 8, 0)
+
+def make_sure_file_exist(src_path, max_try_times = 10):
+    """
+    确保源文件存在，尝试次数最大位10，即10s
+
+    Parameters:
+    -----------
+    src_path: string
+        源文件地址
+    max_try_times: number
+        尝试次数，默认值为20
+    """
+    times = 0
+    while not os.path.exists(src_path):
+        print('can not find file : {0}, try {1}'.format(src_path, times+1))
+        if times >= max_try_times:
+            return False
+        sleep(1)
+        times +=1
+    return True
+
 
 def main(simple_name, docpath=None):
     if docpath is None:
         docpath = os.path.join(ROOT_PATH, 'data')
     else:
         docpath = os.path.abspath(docpath)   
-    print(docpath)
     inputfilename = simple_name+'.docx'
     outputfilename = simple_name+'.pdf'
     src_path = os.path.join(docpath,inputfilename)
     des_path = os.path.join(docpath, outputfilename)
     print(src_path,des_path)
-    if not os.path.exists(src_path):
+    if not make_sure_file_exist(src_path):
         print(simple_name+" not exists")
         return
     if not os.path.exists(des_path):
