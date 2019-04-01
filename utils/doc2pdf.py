@@ -3,7 +3,8 @@ from __future__ import unicode_literals
 
 import os
 import sys
-from time import sleep
+from time import sleep, localtime, strftime
+from shutil import move
 from pythoncom import CoInitialize, CoUninitialize
 from win32com.client import Dispatch, constants, gencache
 
@@ -45,6 +46,10 @@ def convert_word_to_pdf(docx_path, pdf_path):
         word.Quit(constants.wdDoNotSaveChanges)
         CoUninitialize()
 
+def save_doc(fs, docx_path):
+    with open(docx_path) as f:
+        f.write(fs)
+
 def ensure_module():
     gencache.EnsureModule('{00020905-0000-0000-C000-0000000000046}', 0, 8, 0)
 
@@ -78,14 +83,15 @@ def main(simple_name, docpath=None):
     outputfilename = simple_name+'.pdf'
     src_path = os.path.join(docpath,inputfilename)
     des_path = os.path.join(docpath, outputfilename)
+    bak_path = os.path.join(ROOT_PATH,'backup', outputfilename+strftime("%Y%m%d%H%M%S", localtime()))
     print(src_path,des_path)
     if not make_sure_file_exist(src_path):
         print(simple_name+" not exists")
         return
-    if not os.path.exists(des_path):
-        convert_word_to_pdf(src_path,des_path)
-    else:
-        print(des_path+' already exists')
+    if os.path.exists(des_path):
+        move(des_path, bak_path)
+        print('backup file: {0} success'.format(bak_path))
+    convert_word_to_pdf(src_path,des_path)
     
 
 if __name__=="__main__":

@@ -20,5 +20,6 @@ from doc2pdf import views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^query/', views.index, name="index")
+    url(r'^query/', views.index, name="index"),
+    url(r'^convert/$', views.convert)
 ]
